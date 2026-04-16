@@ -1,418 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>TradeLog — Trading Journal</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #080c10;
-    --surface: #0d1117;
-    --card: #111820;
-    --border: #1e2d3d;
-    --accent: #00d4ff;
-    --accent2: #00ff9d;
-    --red: #ff3b5c;
-    --green: #00e676;
-    --gold: #ffc947;
-    --text: #e8edf2;
-    --muted: #5a7a8a;
-    --font-display: 'Syne', sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-display);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+:root{--bg:#080c10;--surface:#0d1117;--card:#111820;--border:#1e2d3d;--accent:#00d4ff;--accent2:#00ff9d;--red:#ff3b5c;--green:#00e676;--gold:#ffc947;--text:#e8edf2;--muted:#5a7a8a;--font-display:'Syne',sans-serif;--font-mono:'IBM Plex Mono',monospace;}
+*{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-display);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;animation:orb-drift 12s ease-in-out infinite alternate;}
+.orb1{width:500px;height:500px;background:rgba(0,212,255,0.07);top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:rgba(0,255,157,0.05);bottom:-50px;left:-100px;animation-delay:-6s;}
+@keyframes orb-drift{from{transform:translate(0,0);}to{transform:translate(30px,20px);}}
 
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none; z-index: 0;
-  }
+/* AUTH */
+#auth-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg);}
+.auth-card{position:relative;z-index:1;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:48px 44px;width:420px;box-shadow:0 0 60px rgba(0,212,255,0.08),0 30px 60px rgba(0,0,0,0.6);animation:card-in 0.6s cubic-bezier(0.16,1,0.3,1) both;}
+@keyframes card-in{from{opacity:0;transform:translateY(30px) scale(0.97);}to{opacity:1;transform:none;}}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:36px;}
+.auth-logo-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;}
+.auth-logo-text{font-size:22px;font-weight:800;letter-spacing:-0.5px;}
+.auth-logo-text span{color:var(--accent);}
+.auth-tabs{display:flex;gap:4px;margin-bottom:32px;background:var(--surface);border-radius:10px;padding:4px;}
+.auth-tab{flex:1;padding:9px;text-align:center;border-radius:8px;cursor:pointer;font-size:14px;font-family:var(--font-display);font-weight:600;transition:all 0.2s;border:none;background:transparent;color:var(--muted);}
+.auth-tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.4);}
+.auth-form{display:flex;flex-direction:column;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+.form-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:var(--font-mono);font-size:14px;outline:none;transition:all 0.2s;}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,0.1);}
+.form-input::placeholder{color:var(--muted);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:13px;color:#080c10;font-family:var(--font-display);font-weight:800;font-size:15px;cursor:pointer;margin-top:6px;transition:all 0.2s;letter-spacing:0.02em;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,255,0.3);}
+.auth-error{color:var(--red);font-size:13px;font-family:var(--font-mono);background:rgba(255,59,92,0.08);border:1px solid rgba(255,59,92,0.2);border-radius:8px;padding:10px 14px;display:none;}
+.auth-msg{color:var(--green);font-size:13px;font-family:var(--font-mono);background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);border-radius:8px;padding:10px 14px;display:none;}
 
-  .orb {
-    position: fixed; border-radius: 50%;
-    filter: blur(120px); pointer-events: none; z-index: 0;
-    animation: orb-drift 12s ease-in-out infinite alternate;
-  }
-  .orb1 { width:500px; height:500px; background:rgba(0,212,255,0.07); top:-100px; right:-100px; }
-  .orb2 { width:400px; height:400px; background:rgba(0,255,157,0.05); bottom:-50px; left:-100px; animation-delay: -6s; }
-  @keyframes orb-drift { from { transform: translate(0,0); } to { transform: translate(30px,20px); } }
+/* APP */
+#app{display:none;min-height:100vh;position:relative;z-index:1;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:rgba(13,17,23,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.topbar-logo{display:flex;align-items:center;gap:10px;}
+.topbar-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;}
+.topbar-logo-text{font-size:18px;font-weight:800;letter-spacing:-0.5px;}
+.topbar-logo-text span{color:var(--accent);}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.user-badge{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:6px 14px 6px 8px;}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#080c10;}
+.user-name{font-size:13px;font-weight:600;}
+.btn-logout{background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--muted);font-family:var(--font-display);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-logout:hover{border-color:var(--red);color:var(--red);}
+.main{max-width:1200px;margin:0 auto;padding:36px 24px;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px;}
+.page-title{font-size:28px;font-weight:800;letter-spacing:-0.5px;}
+.page-title span{color:var(--accent);}
+.btn-add{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:11px 20px;color:#080c10;font-family:var(--font-display);font-weight:800;font-size:14px;cursor:pointer;transition:all 0.2s;}
+.btn-add:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,255,0.3);}
 
-  /* AUTH */
-  #auth-screen {
-    position: fixed; inset: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--bg);
-  }
-  .auth-card {
-    position: relative; z-index: 1;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 48px 44px;
-    width: 420px;
-    box-shadow: 0 0 60px rgba(0,212,255,0.08), 0 30px 60px rgba(0,0,0,0.6);
-    animation: card-in 0.6s cubic-bezier(0.16,1,0.3,1) both;
-  }
-  @keyframes card-in { from { opacity:0; transform: translateY(30px) scale(0.97); } to { opacity:1; transform: none; } }
+/* NAV TABS */
+.nav-tabs{display:flex;gap:6px;margin-bottom:28px;background:var(--surface);border-radius:12px;padding:5px;border:1px solid var(--border);}
+.nav-tab{flex:1;padding:10px 6px;text-align:center;border-radius:8px;cursor:pointer;font-size:13px;font-family:var(--font-display);font-weight:600;transition:all 0.2s;border:none;background:transparent;color:var(--muted);}
+.nav-tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.4);}
 
-  .auth-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
-  .auth-logo-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center; font-size: 20px;
-  }
-  .auth-logo-text { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-  .auth-logo-text span { color: var(--accent); }
+/* STATS GRID */
+.stats-section-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;}
+.stats-3col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+@media(max-width:600px){.stats-3col{grid-template-columns:1fr;}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;animation:fade-up 0.5s ease both;}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.4);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.stat-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.stat-value{font-size:26px;font-weight:800;font-family:var(--font-mono);letter-spacing:-1px;}
+.stat-value.up{color:var(--green);}
+.stat-value.down{color:var(--red);}
+.stat-value.neutral{color:var(--text);}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px;font-family:var(--font-mono);}
+.stat-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;margin-top:6px;}
+.stat-status.profit{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.25);}
+.stat-status.loss{background:rgba(255,59,92,0.1);color:var(--red);border:1px solid rgba(255,59,92,0.25);}
+.stat-status.neutral{background:rgba(90,122,138,0.1);color:var(--muted);border:1px solid rgba(90,122,138,0.2);}
+@keyframes fade-up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
 
-  .auth-tabs {
-    display: flex; gap: 4px; margin-bottom: 32px;
-    background: var(--surface); border-radius: 10px; padding: 4px;
-  }
-  .auth-tab {
-    flex: 1; padding: 9px; text-align: center;
-    border-radius: 8px; cursor: pointer; font-size: 14px;
-    font-family: var(--font-display); font-weight: 600;
-    transition: all 0.2s; border: none; background: transparent; color: var(--muted);
-  }
-  .auth-tab.active { background: var(--card); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+/* SECTION */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.section-title{font-size:18px;font-weight:700;}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;}
+.filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--muted);font-family:var(--font-display);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent);}
 
-  .auth-form { display: flex; flex-direction: column; gap: 16px; }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
-  .form-input {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px;
-    color: var(--text); font-family: var(--font-mono); font-size: 14px;
-    outline: none; transition: all 0.2s;
-  }
-  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,212,255,0.1); }
-  .form-input::placeholder { color: var(--muted); }
+/* MARKET TYPE TOGGLE */
+.market-toggle{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:3px;}
+.market-btn{padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-family:var(--font-display);font-weight:700;transition:all 0.15s;border:none;background:transparent;color:var(--muted);}
+.market-btn.active{background:var(--card);color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.3);}
 
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none; border-radius: 10px; padding: 13px;
-    color: #080c10; font-family: var(--font-display); font-weight: 800;
-    font-size: 15px; cursor: pointer; margin-top: 6px;
-    transition: all 0.2s; letter-spacing: 0.02em;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.3); }
-  .btn-primary:active { transform: translateY(0); }
+/* DAY GROUP */
+.day-group{margin-bottom:20px;}
+.day-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 0 0;cursor:pointer;user-select:none;transition:background 0.15s;}
+.day-header:hover{background:rgba(0,212,255,0.04);}
+.day-header-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.day-date-label{font-size:14px;font-weight:700;}
+.day-summary-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;font-family:var(--font-display);}
+.chip-neutral{background:rgba(90,122,138,0.12);color:var(--muted);border:1px solid rgba(90,122,138,0.2);}
+.chip-profit{background:rgba(0,230,118,0.12);color:var(--green);border:1px solid rgba(0,230,118,0.3);}
+.chip-loss{background:rgba(255,59,92,0.12);color:var(--red);border:1px solid rgba(255,59,92,0.3);}
+.day-toggle{color:var(--muted);font-size:12px;transition:transform 0.2s;}
+.day-toggle.collapsed{transform:rotate(-90deg);}
+.day-trades-wrap{border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;}
+.day-trades-wrap.collapsed{display:none;}
 
-  .auth-error {
-    color: var(--red); font-size: 13px; font-family: var(--font-mono);
-    background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.2);
-    border-radius: 8px; padding: 10px 14px; display: none;
-  }
-  .auth-msg {
-    color: var(--green); font-size: 13px; font-family: var(--font-mono);
-    background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2);
-    border-radius: 8px; padding: 10px 14px; display: none;
-  }
+/* TRADE CARD */
+.trade-card{background:var(--card);border-bottom:1px solid rgba(30,45,61,0.6);padding:16px 20px;display:grid;grid-template-columns:160px 90px 100px 1fr;gap:14px;align-items:start;transition:background 0.15s;animation:row-in 0.3s ease both;}
+.trade-card:last-child{border-bottom:none;}
+.trade-card:hover{background:rgba(0,212,255,0.03);}
+@keyframes row-in{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:none;}}
+.tc-symbol{font-size:15px;font-weight:700;color:var(--accent);font-family:var(--font-mono);}
+.tc-setup{font-size:11px;color:var(--muted);margin-top:3px;font-family:var(--font-mono);}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.05em;font-family:var(--font-display);}
+.badge-long{background:rgba(0,230,118,0.12);color:var(--green);border:1px solid rgba(0,230,118,0.3);}
+.badge-short{background:rgba(255,59,92,0.12);color:var(--red);border:1px solid rgba(255,59,92,0.3);}
+.badge-equity{background:rgba(255,201,71,0.12);color:var(--gold);border:1px solid rgba(255,201,71,0.3);}
+.badge-forex{background:rgba(0,212,255,0.12);color:var(--accent);border:1px solid rgba(0,212,255,0.3);}
+.pnl-positive{color:var(--green);font-weight:800;font-family:var(--font-mono);font-size:16px;}
+.pnl-negative{color:var(--red);font-weight:800;font-family:var(--font-mono);font-size:16px;}
+.tc-notes{font-size:12px;line-height:1.6;}
+.note-block{margin-bottom:8px;}
+.note-block:last-child{margin-bottom:0;}
+.note-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px;}
+.note-label.learn{color:var(--green);}
+.note-label.mistake{color:var(--red);}
+.note-text{color:var(--muted);font-family:var(--font-mono);}
+.tc-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end;}
+.btn-icon{background:var(--surface);border:1px solid var(--border);border-radius:7px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;font-size:13px;}
+.btn-icon:hover{border-color:var(--accent);background:rgba(0,212,255,0.08);}
+.btn-icon.del:hover{border-color:var(--red);background:rgba(255,59,92,0.08);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:16px;}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:0.5;}
+.empty-text{font-size:16px;font-weight:600;margin-bottom:6px;}
+.empty-sub{font-size:13px;font-family:var(--font-mono);}
 
-  /* APP */
-  #app { display: none; min-height: 100vh; position: relative; z-index: 1; }
+/* INSIGHT TABS */
+.insight-tabs{display:flex;gap:6px;margin-bottom:20px;}
+.insight-tab{padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-family:var(--font-display);font-weight:700;transition:all 0.15s;border:1px solid var(--border);background:var(--surface);color:var(--muted);}
+.insight-tab.active{background:var(--card);color:var(--text);border-color:var(--accent);}
+.insight-content{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;}
+.insight-ai-btn{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,255,157,0.1));border:1px solid rgba(0,212,255,0.3);border-radius:10px;padding:12px 18px;cursor:pointer;margin-bottom:20px;transition:all 0.2s;width:100%;}
+.insight-ai-btn:hover{background:linear-gradient(135deg,rgba(0,212,255,0.25),rgba(0,255,157,0.15));}
+.insight-ai-label{font-size:13px;font-weight:700;color:var(--accent);}
+.insight-ai-sub{font-size:11px;color:var(--muted);font-family:var(--font-mono);}
+.raw-entry{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.raw-entry-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.raw-entry-symbol{font-size:12px;font-weight:700;color:var(--accent);font-family:var(--font-mono);}
+.raw-entry-date{font-size:11px;color:var(--muted);font-family:var(--font-mono);}
+.raw-entry-text{font-size:13px;color:var(--text);font-family:var(--font-mono);line-height:1.6;}
+.summary-box{background:var(--surface);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:20px;margin-bottom:20px;display:none;}
+.summary-box.visible{display:block;}
+.summary-box-title{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;}
+.summary-box-text{font-size:14px;color:var(--text);font-family:var(--font-mono);line-height:1.7;white-space:pre-wrap;}
+.summary-loading{display:none;align-items:center;gap:10px;padding:16px;color:var(--muted);font-size:13px;font-family:var(--font-mono);}
+.summary-loading.visible{display:flex;}
+.spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 32px; background: rgba(13,17,23,0.85);
-    backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; z-index: 50;
-  }
-  .topbar-logo { display: flex; align-items: center; gap: 10px; }
-  .topbar-logo-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center; font-size: 16px;
-  }
-  .topbar-logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
-  .topbar-logo-text span { color: var(--accent); }
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(8,12,16,0.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;width:560px;max-width:96vw;padding:36px;max-height:90vh;overflow-y:auto;transform:scale(0.95) translateY(20px);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1);box-shadow:0 40px 80px rgba(0,0,0,0.7);}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.modal-title{font-size:20px;font-weight:800;}
+.btn-close{background:var(--surface);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--muted);transition:all 0.15s;}
+.btn-close:hover{border-color:var(--red);color:var(--red);}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:500px){.modal-grid{grid-template-columns:1fr;}}
+.modal-grid .full{grid-column:1/-1;}
+.form-select{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:var(--font-mono);font-size:14px;outline:none;transition:all 0.2s;width:100%;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a8a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+.form-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,0.1);}
+textarea.form-input{resize:vertical;min-height:70px;font-family:var(--font-mono);}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;}
+.btn-secondary{background:transparent;border:1px solid var(--border);border-radius:10px;padding:11px 20px;color:var(--muted);font-family:var(--font-display);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.btn-secondary:hover{border-color:var(--text);color:var(--text);}
 
-  .topbar-right { display: flex; align-items: center; gap: 16px; }
-  .user-badge {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 50px; padding: 6px 14px 6px 8px;
-  }
-  .user-avatar {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 800; color: #080c10;
-  }
-  .user-name { font-size: 13px; font-weight: 600; }
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:var(--muted);}
 
-  .btn-logout {
-    background: transparent; border: 1px solid var(--border);
-    border-radius: 8px; padding: 7px 14px; color: var(--muted);
-    font-family: var(--font-display); font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .btn-logout:hover { border-color: var(--red); color: var(--red); }
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;z-index:300;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:600;box-shadow:0 12px 32px rgba(0,0,0,0.5);transform:translateY(20px);opacity:0;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);display:flex;align-items:center;gap:10px;max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(0,230,118,0.4);}
+.toast.error{border-color:rgba(255,59,92,0.4);}
+.toast-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.toast.success .toast-dot{background:var(--green);}
+.toast.error .toast-dot{background:var(--red);}
 
-  .main { max-width: 1200px; margin: 0 auto; padding: 36px 24px; }
-
-  .page-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 32px; flex-wrap: wrap; gap: 16px;
-  }
-  .page-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
-  .page-title span { color: var(--accent); }
-
-  .btn-add {
-    display: flex; align-items: center; gap: 8px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none; border-radius: 10px; padding: 11px 20px;
-    color: #080c10; font-family: var(--font-display); font-weight: 800;
-    font-size: 14px; cursor: pointer; transition: all 0.2s;
-  }
-  .btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.3); }
-
-  /* STATS */
-  .stats-row {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 16px; margin-bottom: 32px;
-  }
-  @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2,1fr); } }
-  @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr; } }
-
-  .stat-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px 22px;
-    position: relative; overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-    animation: fade-up 0.5s ease both;
-  }
-  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
-  .stat-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-  }
-  .stat-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
-  .stat-value { font-size: 30px; font-weight: 800; font-family: var(--font-mono); letter-spacing: -1px; }
-  .stat-value.up { color: var(--green); }
-  .stat-value.down { color: var(--red); }
-  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; font-family: var(--font-mono); }
-
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: none; }
-  }
-
-  /* SECTION */
-  .section-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
-  }
-  .section-title { font-size: 18px; font-weight: 700; }
-
-  .filter-row { display: flex; gap: 8px; }
-  .filter-btn {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 7px 14px; color: var(--muted);
-    font-family: var(--font-display); font-size: 12px; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .filter-btn.active, .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* DAY GROUP */
-  .day-group { margin-bottom: 24px; }
-
-  .day-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 18px;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px 12px 0 0;
-    cursor: pointer; user-select: none;
-    transition: background 0.15s;
-  }
-  .day-header:hover { background: rgba(0,212,255,0.04); }
-  .day-header-left { display: flex; align-items: center; gap: 12px; }
-  .day-date-label { font-size: 14px; font-weight: 700; }
-  .day-summary-chips { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .chip {
-    font-size: 11px; font-weight: 700; padding: 3px 10px;
-    border-radius: 20px; font-family: var(--font-display);
-  }
-  .chip-neutral { background: rgba(90,122,138,0.12); color: var(--muted); border: 1px solid rgba(90,122,138,0.2); }
-  .chip-profit { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
-  .chip-loss { background: rgba(255,59,92,0.12); color: var(--red); border: 1px solid rgba(255,59,92,0.3); }
-
-  .day-toggle { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
-  .day-toggle.collapsed { transform: rotate(-90deg); }
-
-  .day-trades-wrap {
-    border: 1px solid var(--border); border-top: none;
-    border-radius: 0 0 12px 12px; overflow: hidden;
-  }
-  .day-trades-wrap.collapsed { display: none; }
-
-  /* TRADE CARD */
-  .trade-card {
-    background: var(--card); border-bottom: 1px solid rgba(30,45,61,0.6);
-    padding: 18px 20px;
-    display: grid;
-    grid-template-columns: 140px 80px 100px 1fr;
-    gap: 16px; align-items: start;
-    transition: background 0.15s;
-    animation: row-in 0.3s ease both;
-  }
-  .trade-card:last-child { border-bottom: none; }
-  .trade-card:hover { background: rgba(0,212,255,0.03); }
-
-  @keyframes row-in { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:none; } }
-
-  .tc-symbol { font-size: 15px; font-weight: 700; color: var(--accent); font-family: var(--font-mono); }
-  .tc-setup { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: var(--font-mono); }
-
-  .badge {
-    display: inline-block; padding: 3px 10px; border-radius: 20px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; font-family: var(--font-display);
-  }
-  .badge-long { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
-  .badge-short { background: rgba(255,59,92,0.12); color: var(--red); border: 1px solid rgba(255,59,92,0.3); }
-
-  .pnl-positive { color: var(--green); font-weight: 800; font-family: var(--font-mono); font-size: 16px; }
-  .pnl-negative { color: var(--red); font-weight: 800; font-family: var(--font-mono); font-size: 16px; }
-
-  .tc-notes { font-size: 12px; line-height: 1.6; }
-  .note-block { margin-bottom: 8px; }
-  .note-block:last-child { margin-bottom: 0; }
-  .note-label {
-    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-    margin-bottom: 3px;
-  }
-  .note-label.learn { color: var(--green); }
-  .note-label.mistake { color: var(--red); }
-  .note-text { color: var(--muted); font-family: var(--font-mono); }
-
-  .tc-actions { display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
-  .btn-icon {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 7px; width: 30px; height: 30px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.15s; font-size: 13px;
-  }
-  .btn-icon:hover { border-color: var(--accent); background: rgba(0,212,255,0.08); }
-  .btn-icon.del:hover { border-color: var(--red); background: rgba(255,59,92,0.08); }
-
-  .empty-state {
-    text-align: center; padding: 60px 20px;
-    color: var(--muted);
-    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-  }
-  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
-  .empty-text { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-  .empty-sub { font-size: 13px; font-family: var(--font-mono); }
-
-  /* MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(8,12,16,0.85); backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.25s;
-  }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; width: 540px; max-width: 96vw;
-    padding: 36px; max-height: 90vh; overflow-y: auto;
-    transform: scale(0.95) translateY(20px); transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
-    box-shadow: 0 40px 80px rgba(0,0,0,0.7);
-  }
-  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
-
-  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-  .modal-title { font-size: 20px; font-weight: 800; }
-  .btn-close {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 16px; color: var(--muted); transition: all 0.15s;
-  }
-  .btn-close:hover { border-color: var(--red); color: var(--red); }
-
-  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 500px) { .modal-grid { grid-template-columns: 1fr; } }
-  .modal-grid .full { grid-column: 1/-1; }
-
-  .form-select {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px;
-    color: var(--text); font-family: var(--font-mono); font-size: 14px;
-    outline: none; transition: all 0.2s; width: 100%; appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a8a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
-  }
-  .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,212,255,0.1); }
-
-  textarea.form-input { resize: vertical; min-height: 80px; font-family: var(--font-mono); }
-
-  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
-  .btn-secondary {
-    background: transparent; border: 1px solid var(--border);
-    border-radius: 10px; padding: 11px 20px; color: var(--muted);
-    font-family: var(--font-display); font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .btn-secondary:hover { border-color: var(--text); color: var(--text); }
-
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
-  .toast {
-    position: fixed; bottom: 28px; right: 28px; z-index: 300;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px 20px;
-    font-size: 14px; font-weight: 600;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
-    transform: translateY(20px); opacity: 0;
-    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-    display: flex; align-items: center; gap: 10px; max-width: 320px;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { border-color: rgba(0,230,118,0.4); }
-  .toast.error { border-color: rgba(255,59,92,0.4); }
-  .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .toast.success .toast-dot { background: var(--green); }
-  .toast.error .toast-dot { background: var(--red); }
-
-  @media (max-width: 700px) {
-    .trade-card { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; }
-    .tc-notes { grid-column: 1/-1; }
-    .tc-actions { justify-content: flex-start; }
-    .main { padding: 20px 12px; }
-    .topbar { padding: 12px 16px; }
-  }
-
-  .day-status {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700;
-  }
-  .day-status.profit { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
-  .day-status.loss { background: rgba(255,59,92,0.1); color: var(--red); border: 1px solid rgba(255,59,92,0.25); }
+@media(max-width:700px){
+  .trade-card{grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto;}
+  .tc-notes{grid-column:1/-1;}
+  .tc-actions{justify-content:flex-start;}
+  .main{padding:20px 12px;}
+  .topbar{padding:12px 16px;}
+}
 </style>
 </head>
 <body>
-
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 
-<!-- AUTH -->
+<!-- AUTH SCREEN -->
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">
@@ -434,7 +231,7 @@
         <input class="form-input" id="login-pass" type="password" placeholder="Enter password" autocomplete="current-password"/>
       </div>
       <button class="btn-primary" onclick="doLogin()">Sign In →</button>
-      <p style="font-size:12px; color:var(--muted); font-family:var(--font-mono); text-align:center; margin-top:4px;">Demo: user1 / pass123</p>
+      <p style="font-size:12px;color:var(--muted);font-family:var(--font-mono);text-align:center;margin-top:4px;">Demo: user1 / pass123</p>
     </div>
     <div id="register-form" class="auth-form" style="display:none">
       <div class="auth-error" id="reg-error"></div>
@@ -456,7 +253,7 @@
   </div>
 </div>
 
-<!-- APP -->
+<!-- MAIN APP -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-logo">
@@ -476,41 +273,38 @@
     <div class="page-header">
       <div>
         <div class="page-title">Trading <span>Journal</span></div>
-        <div style="font-size:13px; color:var(--muted); font-family:var(--font-mono); margin-top:4px;" id="today-date"></div>
+        <div style="font-size:13px;color:var(--muted);font-family:var(--font-mono);margin-top:4px;" id="today-date"></div>
       </div>
-      <button class="btn-add" onclick="openModal()">
-        <span style="font-size:18px; line-height:1">+</span> Log Trade
-      </button>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card" style="animation-delay:0.05s">
-        <div class="stat-label">Total Trades</div>
-        <div class="stat-value" id="stat-total">0</div>
-        <div class="stat-sub">All time</div>
-      </div>
-      <div class="stat-card" style="animation-delay:0.1s">
-        <div class="stat-label">Total P&amp;L</div>
-        <div class="stat-value" id="stat-pnl">$0</div>
-        <div class="stat-sub">Net profit/loss</div>
-      </div>
-      <div class="stat-card" style="animation-delay:0.15s">
-        <div class="stat-label">Win Rate</div>
-        <div class="stat-value" id="stat-winrate">0%</div>
-        <div class="stat-sub">Profitable trades</div>
-      </div>
-      <div class="stat-card" style="animation-delay:0.2s">
-        <div class="stat-label">Today</div>
-        <div style="margin-top:6px;" id="stat-day-status">
-          <span class="day-status" style="background:rgba(90,122,138,0.1);color:var(--muted);border:1px solid rgba(90,122,138,0.2)">⬤ No trades</span>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div class="market-toggle">
+          <button class="market-btn active" id="mb-forex" onclick="setMarket('forex')">💱 Forex ($)</button>
+          <button class="market-btn" id="mb-equity" onclick="setMarket('equity')">📈 Equity (₹)</button>
         </div>
-        <div class="stat-sub" id="stat-day-pnl">log a trade to track</div>
+        <button class="btn-add" onclick="openModal()">
+          <span style="font-size:18px;line-height:1">+</span> Log Trade
+        </button>
       </div>
     </div>
 
-    <!-- Trade Log -->
-    <div>
+    <!-- NAV TABS -->
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchNav('dashboard',this)">📊 Dashboard</button>
+      <button class="nav-tab" onclick="switchNav('journal',this)">📓 Trade Log</button>
+      <button class="nav-tab" onclick="switchNav('insights',this)">🧠 Insights</button>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="page-dashboard">
+      <div class="stats-section-title">Day Performance</div>
+      <div class="stats-3col" id="stats-day"></div>
+      <div class="stats-section-title" style="margin-top:8px;">Week Performance</div>
+      <div class="stats-3col" id="stats-week"></div>
+      <div class="stats-section-title" style="margin-top:8px;">Month Performance</div>
+      <div class="stats-3col" id="stats-month"></div>
+    </div>
+
+    <!-- JOURNAL PAGE -->
+    <div id="page-journal" style="display:none">
       <div class="section-header">
         <div class="section-title">Trade Log <span style="font-size:13px;color:var(--muted);font-weight:400;font-family:var(--font-mono)">— grouped by day</span></div>
         <div class="filter-row">
@@ -520,6 +314,50 @@
         </div>
       </div>
       <div id="trade-log-container"></div>
+    </div>
+
+    <!-- INSIGHTS PAGE -->
+    <div id="page-insights" style="display:none">
+      <div class="insight-tabs">
+        <button class="insight-tab active" onclick="switchInsight('mistakes',this)">⚠️ Mistakes</button>
+        <button class="insight-tab" onclick="switchInsight('learnings',this)">📚 Learnings</button>
+      </div>
+
+      <!-- Mistakes -->
+      <div id="insight-mistakes">
+        <div class="summary-loading" id="loading-mistakes">
+          <div class="spinner"></div><span>Generating AI summary...</span>
+        </div>
+        <div class="summary-box" id="summary-mistakes">
+          <div class="summary-box-title">⚠️ Mistakes Summary</div>
+          <div class="summary-box-text" id="summary-mistakes-text"></div>
+        </div>
+        <button class="insight-ai-btn" onclick="generateSummary('mistakes')">
+          <div>
+            <div class="insight-ai-label">✨ Generate AI Summary of Mistakes</div>
+            <div class="insight-ai-sub">Claude will analyze all your mistakes and extract recurring patterns</div>
+          </div>
+        </button>
+        <div id="raw-mistakes-list"></div>
+      </div>
+
+      <!-- Learnings -->
+      <div id="insight-learnings" style="display:none">
+        <div class="summary-loading" id="loading-learnings">
+          <div class="spinner"></div><span>Generating AI summary...</span>
+        </div>
+        <div class="summary-box" id="summary-learnings">
+          <div class="summary-box-title">📚 Learnings Summary</div>
+          <div class="summary-box-text" id="summary-learnings-text"></div>
+        </div>
+        <button class="insight-ai-btn" onclick="generateSummary('learnings')">
+          <div>
+            <div class="insight-ai-label">✨ Generate AI Summary of Learnings</div>
+            <div class="insight-ai-sub">Claude will synthesize your key lessons into actionable insights</div>
+          </div>
+        </button>
+        <div id="raw-learnings-list"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -533,8 +371,8 @@
     </div>
     <div class="modal-grid">
       <div class="form-group">
-        <label class="form-label">Currency Pair</label>
-        <input class="form-input" id="f-symbol" type="text" placeholder="e.g. EURUSD, GBPJPY"/>
+        <label class="form-label">Symbol / Pair</label>
+        <input class="form-input" id="f-symbol" type="text" placeholder="e.g. EURUSD, RELIANCE"/>
       </div>
       <div class="form-group">
         <label class="form-label">Trade Date</label>
@@ -548,8 +386,15 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">P&amp;L ($)</label>
+        <label class="form-label" id="pnl-label">P&amp;L ($)</label>
         <input class="form-input" id="f-pnl" type="number" step="0.01" placeholder="e.g. 120.50 or -45.00"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Market Type</label>
+        <select class="form-select" id="f-market">
+          <option value="forex">Forex ($)</option>
+          <option value="equity">Equity (₹)</option>
+        </select>
       </div>
       <div class="form-group full">
         <label class="form-label">Setup / Strategy</label>
@@ -571,49 +416,70 @@
   </div>
 </div>
 
-<div class="toast" id="toast">
-  <div class="toast-dot"></div>
-  <span id="toast-msg">Saved!</span>
-</div>
+<div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg">Saved!</span></div>
 
 <script>
-const DB_KEY = 'TeadeLog_db';
+const DB_KEY = 'TradeLog_db_v2';
+
 function loadDB() {
   try { return JSON.parse(localStorage.getItem(DB_KEY)) || { users: {}, trades: {} }; }
   catch { return { users: {}, trades: {} }; }
 }
 function saveDB(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
 
+function uid() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+
+function today(offset = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().slice(0, 10);
+}
+
+function getWeekStart() {
+  const d = new Date();
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const m = new Date(d.setDate(diff));
+  return m.toISOString().slice(0, 10);
+}
+
+function getMonthStart() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
+}
+
+// Seed demo data
 (function seedDemo() {
   const db = loadDB();
   if (!db.users['user1']) {
     db.users['user1'] = { pass: 'pass123', created: Date.now() };
     db.trades['user1'] = [
-      { id: uid(), symbol: 'EURUSD', date: today(-1), type: 'long', pnl: 142.50, setup: 'EMA Crossover', learning: 'Trend was strong, held the trade well with patience.', mistakes: 'Entry was slightly late — missed 15 pips.' },
-      { id: uid(), symbol: 'GBPJPY', date: today(-1), type: 'short', pnl: -68.00, setup: 'Supply Zone Rejection', learning: 'Zone was valid but news event caused spike.', mistakes: 'Traded during high-impact news — avoid this.' },
-      { id: uid(), symbol: 'USDJPY', date: today(-2), type: 'long', pnl: 210.00, setup: 'Breakout Retest', learning: 'Clean breakout retest gave perfect R:R entry.', mistakes: 'Took partial profits too early.' },
-      { id: uid(), symbol: 'AUDUSD', date: today(-2), type: 'short', pnl: -35.00, setup: 'Resistance Flip', learning: 'Market context was correct, execution was off.', mistakes: 'Stop was too tight, got stopped out on wick.' },
-      { id: uid(), symbol: 'XAUUSD', date: today(0), type: 'long', pnl: 320.00, setup: 'Demand Zone Bounce', learning: 'Gold demand zone held perfectly. Clean trade.', mistakes: 'No major mistakes today.' },
+      { id: uid(), symbol: 'EURUSD', date: today(-1), type: 'long', pnl: 142.50, market: 'forex', setup: 'EMA Crossover', learning: 'Trend was strong, held the trade well with patience.', mistakes: 'Entry was slightly late — missed 15 pips.' },
+      { id: uid(), symbol: 'GBPJPY', date: today(-1), type: 'short', pnl: -68.00, market: 'forex', setup: 'Supply Zone Rejection', learning: 'Zone was valid but news event caused spike.', mistakes: 'Traded during high-impact news — avoid this.' },
+      { id: uid(), symbol: 'RELIANCE', date: today(-2), type: 'long', pnl: 4200, market: 'equity', setup: 'Breakout Retest', learning: 'Clean breakout retest gave perfect R:R entry.', mistakes: 'Took partial profits too early.' },
+      { id: uid(), symbol: 'HDFCBANK', date: today(-2), type: 'short', pnl: -1800, market: 'equity', setup: 'Resistance Flip', learning: 'Market context was correct, execution was off.', mistakes: 'Stop was too tight, got stopped out on wick.' },
+      { id: uid(), symbol: 'XAUUSD', date: today(0), type: 'long', pnl: 320.00, market: 'forex', setup: 'Demand Zone Bounce', learning: 'Gold demand zone held perfectly. Clean trade.', mistakes: 'No major mistakes today.' },
+      { id: uid(), symbol: 'NIFTY', date: today(0), type: 'long', pnl: 3500, market: 'equity', setup: 'Gap and Go', learning: 'Pre-market gap setup worked perfectly.', mistakes: 'Position size was too small.' },
     ];
     saveDB(db);
   }
 })();
 
-function uid() { return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-function today(offset=0) {
-  const d = new Date(); d.setDate(d.getDate() + offset);
-  return d.toISOString().slice(0,10);
-}
-
 let currentUser = null;
 let currentFilter = 'all';
 let editId = null;
+let currentMarket = 'forex';
+let currentNav = 'dashboard';
+let currentInsight = 'mistakes';
 const collapsedDays = {};
 
+// AUTH
 function switchTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
-  document.getElementById('login-form').style.display = tab==='login' ? 'flex' : 'none';
-  document.getElementById('register-form').style.display = tab==='register' ? 'flex' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((t, i) =>
+    t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'))
+  );
+  document.getElementById('login-form').style.display = tab === 'login' ? 'flex' : 'none';
+  document.getElementById('register-form').style.display = tab === 'register' ? 'flex' : 'none';
 }
 
 function doLogin() {
@@ -621,9 +487,10 @@ function doLogin() {
   const pass = document.getElementById('login-pass').value;
   const err = document.getElementById('login-error');
   const db = loadDB();
-  if (!user||!pass) { showAuthError(err,'Please fill all fields.'); return; }
-  if (!db.users[user]||db.users[user].pass!==pass) { showAuthError(err,'Invalid username or password.'); return; }
-  currentUser = user; enterApp();
+  if (!user || !pass) { showAuthError(err, 'Please fill all fields.'); return; }
+  if (!db.users[user] || db.users[user].pass !== pass) { showAuthError(err, 'Invalid username or password.'); return; }
+  currentUser = user;
+  enterApp();
 }
 
 function doRegister() {
@@ -633,139 +500,202 @@ function doRegister() {
   const err = document.getElementById('reg-error');
   const msg = document.getElementById('reg-msg');
   const db = loadDB();
-  if (!user||!pass||!pass2) { showAuthError(err,'Please fill all fields.'); return; }
-  if (pass!==pass2) { showAuthError(err,'Passwords do not match.'); return; }
-  if (pass.length<4) { showAuthError(err,'Password must be at least 4 characters.'); return; }
-  if (db.users[user]) { showAuthError(err,'Username already taken.'); return; }
+  if (!user || !pass || !pass2) { showAuthError(err, 'Please fill all fields.'); return; }
+  if (pass !== pass2) { showAuthError(err, 'Passwords do not match.'); return; }
+  if (pass.length < 4) { showAuthError(err, 'Password must be at least 4 characters.'); return; }
+  if (db.users[user]) { showAuthError(err, 'Username already taken.'); return; }
   db.users[user] = { pass, created: Date.now() };
   db.trades[user] = [];
   saveDB(db);
-  err.style.display='none';
-  msg.textContent='Account created! You can now sign in.'; msg.style.display='block';
-  setTimeout(() => { switchTab('login'); msg.style.display='none'; document.getElementById('login-user').value=user; }, 1500);
+  err.style.display = 'none';
+  msg.textContent = 'Account created! You can now sign in.';
+  msg.style.display = 'block';
+  setTimeout(() => { switchTab('login'); msg.style.display = 'none'; document.getElementById('login-user').value = user; }, 1500);
 }
 
 function showAuthError(el, msg) {
-  el.textContent=msg; el.style.display='block';
-  el.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'none'}],{duration:200});
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.animate([{ transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'none' }], { duration: 200 });
 }
 
 function doLogout() {
-  currentUser=null;
-  document.getElementById('app').style.display='none';
-  document.getElementById('auth-screen').style.display='flex';
-  document.getElementById('login-user').value='';
-  document.getElementById('login-pass').value='';
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
 }
 
 function enterApp() {
-  document.getElementById('auth-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('user-display-name').textContent=currentUser;
-  document.getElementById('user-avatar-text').textContent=currentUser[0].toUpperCase();
-  document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('user-display-name').textContent = currentUser;
+  document.getElementById('user-avatar-text').textContent = currentUser[0].toUpperCase();
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   renderAll();
 }
 
-function getTrades() { const db=loadDB(); return db.trades[currentUser]||[]; }
-function saveTrades(trades) { const db=loadDB(); db.trades[currentUser]=trades; saveDB(db); }
+// DATA
+function getTrades() { const db = loadDB(); return db.trades[currentUser] || []; }
+function saveTrades(trades) { const db = loadDB(); db.trades[currentUser] = trades; saveDB(db); }
+function renderAll() { const t = getTrades(); renderDashboard(t); renderDayGroups(t); renderInsights(t); }
 
-function renderAll() { const trades=getTrades(); renderStats(trades); renderDayGroups(trades); }
+// MARKET TOGGLE
+function setMarket(m) {
+  currentMarket = m;
+  document.getElementById('mb-forex').classList.toggle('active', m === 'forex');
+  document.getElementById('mb-equity').classList.toggle('active', m === 'equity');
+  document.getElementById('pnl-label').textContent = m === 'forex' ? 'P&L ($)' : 'P&L (₹)';
+  document.getElementById('f-market').value = m;
+}
 
-function fmtPnl(v) {
-  const n=Number(v);
-  const abs=Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  return (n>=0?'+':'-')+'$'+abs;
+// FORMATTING
+function fmtCurrency(v, market) {
+  const n = Number(v);
+  const abs = Math.abs(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const sym = market === 'equity' ? '₹' : '$';
+  return (n >= 0 ? '+' : '-') + sym + abs;
 }
 
 function fmtDate(d) {
   if (!d) return '—';
-  const [y,m,day]=d.split('-');
-  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${day} ${months[parseInt(m)-1]} ${y}`;
+  const [y, m, day] = d.split('-');
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${day} ${months[parseInt(m) - 1]} ${y}`;
 }
 
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
-function renderStats(trades) {
-  const total=trades.length;
-  const totalPnl=trades.reduce((s,t)=>s+Number(t.pnl||0),0);
-  const wins=trades.filter(t=>Number(t.pnl)>0).length;
-  const winRate=total?Math.round(wins/total*100):0;
-  const todayStr=today(0);
-  const todayTrades=trades.filter(t=>t.date===todayStr);
-  const todayPnl=todayTrades.reduce((s,t)=>s+Number(t.pnl||0),0);
+// DASHBOARD
+function calcStats(trades) {
+  const total = trades.length;
+  const pnl = trades.reduce((s, t) => s + Number(t.pnl || 0), 0);
+  const wins = trades.filter(t => Number(t.pnl) > 0).length;
+  const wr = total ? Math.round(wins / total * 100) : null;
+  const status = total === 0 ? 'none' : pnl >= 0 ? 'profit' : 'loss';
+  return { total, pnl, wins, wr, status };
+}
 
-  document.getElementById('stat-total').textContent=total;
-  const pnlEl=document.getElementById('stat-pnl');
-  pnlEl.textContent=fmtPnl(totalPnl);
-  pnlEl.className='stat-value '+(totalPnl>=0?'up':'down');
-  const wrEl=document.getElementById('stat-winrate');
-  wrEl.textContent=winRate+'%';
-  wrEl.className='stat-value '+(winRate>=50?'up':'down');
-  const dayEl=document.getElementById('stat-day-status');
-  if (!todayTrades.length) {
-    dayEl.innerHTML=`<span class="day-status" style="background:rgba(90,122,138,0.1);color:var(--muted);border:1px solid rgba(90,122,138,0.2)">⬤ No trades</span>`;
-  } else if (todayPnl>=0) {
-    dayEl.innerHTML=`<span class="day-status profit">▲ PROFIT DAY</span>`;
-  } else {
-    dayEl.innerHTML=`<span class="day-status loss">▼ LOSS DAY</span>`;
+function renderMixedPnl(trades) {
+  if (!trades.length) return '—';
+  const forexTrades = trades.filter(t => t.market !== 'equity');
+  const equityTrades = trades.filter(t => t.market === 'equity');
+  const forexPnl = forexTrades.reduce((s, t) => s + Number(t.pnl || 0), 0);
+  const equityPnl = equityTrades.reduce((s, t) => s + Number(t.pnl || 0), 0);
+
+  if (equityTrades.length === 0) {
+    const color = forexPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    return `<span style="color:${color}">${fmtCurrency(forexPnl, 'forex')}</span>`;
   }
-  document.getElementById('stat-day-pnl').textContent=todayTrades.length?fmtPnl(todayPnl)+' today':'log a trade to track';
+  if (forexTrades.length === 0) {
+    const color = equityPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    return `<span style="color:${color}">${fmtCurrency(equityPnl, 'equity')}</span>`;
+  }
+  const fColor = forexPnl >= 0 ? 'var(--green)' : 'var(--red)';
+  const eColor = equityPnl >= 0 ? 'var(--green)' : 'var(--red)';
+  return `<span style="font-size:16px;color:${fColor}">${fmtCurrency(forexPnl, 'forex')}</span><br><span style="font-size:14px;color:${eColor}">${fmtCurrency(equityPnl, 'equity')}</span>`;
 }
 
-function renderDayGroups(allTrades) {
-  let trades=[...allTrades];
-  if (currentFilter==='long') trades=trades.filter(t=>t.type==='long');
-  if (currentFilter==='short') trades=trades.filter(t=>t.type==='short');
-  trades.sort((a,b)=>b.date.localeCompare(a.date));
+function renderStatGroup(containerId, trades, label) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const s = calcStats(trades);
+  const wrStr = s.wr === null ? '—' : s.wr + '%';
+  const wrColor = s.wr === null ? 'neutral' : s.wr >= 50 ? 'up' : 'down';
 
-  const container=document.getElementById('trade-log-container');
-  container.innerHTML='';
+  let statusHtml = '';
+  if (s.status === 'none') statusHtml = `<span class="stat-status neutral">⬤ No trades</span>`;
+  else if (s.status === 'profit') statusHtml = `<span class="stat-status profit">▲ Profitable</span>`;
+  else statusHtml = `<span class="stat-status loss">▼ Loss</span>`;
+
+  el.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">${label} P&L</div>
+      <div class="stat-value">${renderMixedPnl(trades)}</div>
+      <div class="stat-sub">${s.total} trade${s.total !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">${label} Win Rate</div>
+      <div class="stat-value ${wrColor}">${wrStr}</div>
+      <div class="stat-sub">${s.wins} win${s.wins !== 1 ? 's' : ''} of ${s.total}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">${label} Status</div>
+      <div style="margin-top:8px;">${statusHtml}</div>
+      <div class="stat-sub" style="margin-top:8px;">${s.total === 0 ? 'no trades yet' : s.pnl >= 0 ? 'Positive session' : 'Negative session'}</div>
+    </div>
+  `;
+}
+
+function renderDashboard(trades) {
+  const todayStr = today(0);
+  const weekStr = getWeekStart();
+  const monthStr = getMonthStart();
+  renderStatGroup('stats-day', trades.filter(t => t.date === todayStr), 'Day');
+  renderStatGroup('stats-week', trades.filter(t => t.date >= weekStr), 'Week');
+  renderStatGroup('stats-month', trades.filter(t => t.date >= monthStr), 'Month');
+}
+
+// TRADE LOG
+function renderDayGroups(allTrades) {
+  let trades = [...allTrades];
+  if (currentFilter === 'long') trades = trades.filter(t => t.type === 'long');
+  if (currentFilter === 'short') trades = trades.filter(t => t.type === 'short');
+  trades.sort((a, b) => b.date.localeCompare(a.date));
+
+  const container = document.getElementById('trade-log-container');
+  container.innerHTML = '';
 
   if (!trades.length) {
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">💹</div><div class="empty-text">No trades logged yet</div><div class="empty-sub">Click "Log Trade" to add your first trade</div></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">💹</div><div class="empty-text">No trades logged yet</div><div class="empty-sub">Click "Log Trade" to add your first trade</div></div>`;
     return;
   }
 
-  // Group by date
-  const groups={};
-  trades.forEach(t => {
-    if (!groups[t.date]) groups[t.date]=[];
-    groups[t.date].push(t);
-  });
-
-  const sortedDates=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
+  const groups = {};
+  trades.forEach(t => { if (!groups[t.date]) groups[t.date] = []; groups[t.date].push(t); });
+  const sortedDates = Object.keys(groups).sort((a, b) => b.localeCompare(a));
 
   sortedDates.forEach((date, gi) => {
-    const dayTrades=groups[date];
-    const dayPnl=dayTrades.reduce((s,t)=>s+Number(t.pnl||0),0);
-    const isProfit=dayPnl>=0;
-    const isCollapsed=!!collapsedDays[date];
+    const dayTrades = groups[date];
+    const isCollapsed = !!collapsedDays[date];
+    const isToday = date === today(0);
+    const dateLabel = isToday ? `${fmtDate(date)} — Today` : fmtDate(date);
 
-    const isToday=date===today(0);
-    const dateLabel=isToday?`${fmtDate(date)} — Today`:fmtDate(date);
+    const forexPnl = dayTrades.filter(t => t.market !== 'equity').reduce((s, t) => s + Number(t.pnl || 0), 0);
+    const equityPnl = dayTrades.filter(t => t.market === 'equity').reduce((s, t) => s + Number(t.pnl || 0), 0);
+    const hasForex = dayTrades.some(t => t.market !== 'equity');
+    const hasEquity = dayTrades.some(t => t.market === 'equity');
 
-    const groupEl=document.createElement('div');
-    groupEl.className='day-group';
-    groupEl.style.animationDelay=(gi*0.06)+'s';
+    let pnlChips = '';
+    if (hasForex) {
+      const cls = forexPnl >= 0 ? 'chip chip-profit' : 'chip chip-loss';
+      const sym = forexPnl >= 0 ? '▲' : '▼';
+      pnlChips += `<span class="${cls}">${sym} ${fmtCurrency(forexPnl, 'forex')}</span>`;
+    }
+    if (hasEquity) {
+      const cls = equityPnl >= 0 ? 'chip chip-profit' : 'chip chip-loss';
+      const sym = equityPnl >= 0 ? '▲' : '▼';
+      pnlChips += `<span class="${cls}">${sym} ${fmtCurrency(equityPnl, 'equity')}</span>`;
+    }
 
-    const pnlChipClass=isProfit?'chip chip-profit':'chip chip-loss';
-    const pnlSymbol=isProfit?'▲':'▼';
-
-    groupEl.innerHTML=`
+    const groupEl = document.createElement('div');
+    groupEl.className = 'day-group';
+    groupEl.innerHTML = `
       <div class="day-header" onclick="toggleDay('${date}')">
         <div class="day-header-left">
           <span class="day-date-label">${esc(dateLabel)}</span>
           <div class="day-summary-chips">
-            <span class="${pnlChipClass}">${pnlSymbol} ${fmtPnl(dayPnl)}</span>
-            <span class="chip chip-neutral">${dayTrades.length} trade${dayTrades.length>1?'s':''}</span>
+            ${pnlChips}
+            <span class="chip chip-neutral">${dayTrades.length} trade${dayTrades.length > 1 ? 's' : ''}</span>
           </div>
         </div>
-        <span class="day-toggle${isCollapsed?' collapsed':''}" id="toggle-arrow-${date}">▼</span>
+        <span class="day-toggle${isCollapsed ? ' collapsed' : ''}" id="toggle-arrow-${date}">▼</span>
       </div>
-      <div class="day-trades-wrap${isCollapsed?' collapsed':''}" id="day-trades-${date}">
-        ${dayTrades.map((t,i)=>renderTradeCard(t,i)).join('')}
+      <div class="day-trades-wrap${isCollapsed ? ' collapsed' : ''}" id="day-trades-${date}">
+        ${dayTrades.map((t, i) => renderTradeCard(t, i)).join('')}
       </div>
     `;
     container.appendChild(groupEl);
@@ -773,121 +703,226 @@ function renderDayGroups(allTrades) {
 }
 
 function renderTradeCard(t, i) {
-  const pnl=Number(t.pnl);
-  const isProfit=pnl>=0;
-  const learning=esc(t.learning||'');
-  const mistakes=esc(t.mistakes||'');
+  const pnl = Number(t.pnl);
+  const isProfit = pnl >= 0;
+  const market = t.market || 'forex';
+  const learning = esc(t.learning || '');
+  const mistakes = esc(t.mistakes || '');
+  const marketBadge = market === 'equity'
+    ? `<span class="badge badge-equity">EQUITY</span>`
+    : `<span class="badge badge-forex">FOREX</span>`;
   return `
-    <div class="trade-card" style="animation-delay:${i*0.05}s">
+    <div class="trade-card" style="animation-delay:${i * 0.05}s">
       <div>
         <div class="tc-symbol">${esc(t.symbol)}</div>
-        <div style="margin-top:6px"><span class="badge badge-${t.type}">${t.type==='long'?'LONG':'SHORT'}</span></div>
-        ${t.setup?`<div class="tc-setup" style="margin-top:6px">${esc(t.setup)}</div>`:''}
+        <div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap;">
+          <span class="badge badge-${t.type}">${t.type === 'long' ? 'LONG' : 'SHORT'}</span>
+          ${marketBadge}
+        </div>
+        ${t.setup ? `<div class="tc-setup" style="margin-top:6px">${esc(t.setup)}</div>` : ''}
       </div>
       <div>
-        <div class="${isProfit?'pnl-positive':'pnl-negative'}">${fmtPnl(pnl)}</div>
+        <div class="${isProfit ? 'pnl-positive' : 'pnl-negative'}">${fmtCurrency(pnl, market)}</div>
       </div>
       <div class="tc-actions" style="padding-top:2px">
         <button class="btn-icon" title="Edit" onclick="editTrade('${t.id}')">✏️</button>
         <button class="btn-icon del" title="Delete" onclick="deleteTrade('${t.id}')">🗑</button>
       </div>
       <div class="tc-notes">
-        ${learning?`<div class="note-block"><div class="note-label learn">📚 Learning</div><div class="note-text">${learning}</div></div>`:''}
-        ${mistakes?`<div class="note-block"><div class="note-label mistake">⚠️ Mistakes</div><div class="note-text">${mistakes}</div></div>`:''}
-        ${!learning&&!mistakes?`<div class="note-text" style="color:var(--muted)">No notes added.</div>`:''}
+        ${learning ? `<div class="note-block"><div class="note-label learn">📚 Learning</div><div class="note-text">${learning}</div></div>` : ''}
+        ${mistakes ? `<div class="note-block"><div class="note-label mistake">⚠️ Mistakes</div><div class="note-text">${mistakes}</div></div>` : ''}
+        ${!learning && !mistakes ? `<div class="note-text" style="color:var(--muted)">No notes added.</div>` : ''}
       </div>
     </div>
   `;
 }
 
+// INSIGHTS
+function renderInsights(trades) {
+  const mistakes = trades.filter(t => t.mistakes && t.mistakes.trim());
+  const learnings = trades.filter(t => t.learning && t.learning.trim());
+
+  const mList = document.getElementById('raw-mistakes-list');
+  const lList = document.getElementById('raw-learnings-list');
+
+  if (mList) mList.innerHTML = mistakes.length
+    ? mistakes.map(t => `
+        <div class="raw-entry">
+          <div class="raw-entry-meta">
+            <span class="raw-entry-symbol">${esc(t.symbol)}</span>
+            <span class="raw-entry-date">${fmtDate(t.date)}</span>
+          </div>
+          <div class="raw-entry-text">${esc(t.mistakes)}</div>
+        </div>`).join('')
+    : `<div class="empty-state"><div class="empty-text">No mistakes logged yet</div></div>`;
+
+  if (lList) lList.innerHTML = learnings.length
+    ? learnings.map(t => `
+        <div class="raw-entry">
+          <div class="raw-entry-meta">
+            <span class="raw-entry-symbol">${esc(t.symbol)}</span>
+            <span class="raw-entry-date">${fmtDate(t.date)}</span>
+          </div>
+          <div class="raw-entry-text">${esc(t.learning)}</div>
+        </div>`).join('')
+    : `<div class="empty-state"><div class="empty-text">No learnings logged yet</div></div>`;
+}
+
+async function generateSummary(type) {
+  const trades = getTrades();
+  const entries = type === 'mistakes'
+    ? trades.filter(t => t.mistakes && t.mistakes.trim())
+    : trades.filter(t => t.learning && t.learning.trim());
+
+  if (!entries.length) { showToast('No entries to summarize yet', 'error'); return; }
+
+  const loadEl = document.getElementById(`loading-${type}`);
+  const boxEl = document.getElementById(`summary-${type}`);
+  const textEl = document.getElementById(`summary-${type}-text`);
+
+  loadEl.classList.add('visible');
+  boxEl.classList.remove('visible');
+
+  const content = entries.map((t, i) => `[${i + 1}] ${t.symbol} (${t.date}): ${type === 'mistakes' ? t.mistakes : t.learning}`).join('\n');
+
+  const prompt = type === 'mistakes'
+    ? `You are a trading coach. A trader has logged the following mistakes across multiple trades:\n\n${content}\n\nAnalyze these mistakes and provide:\n1. Top recurring mistake patterns (2-3 patterns)\n2. Root causes\n3. Actionable rules to fix them\n\nBe concise, specific, and practical. Format with clear sections.`
+    : `You are a trading coach. A trader has logged the following learnings across multiple trades:\n\n${content}\n\nSynthesize these into:\n1. Key insights and patterns (2-3 themes)\n2. Core strengths to build on\n3. Actionable principles to remember\n\nBe concise, specific, and practical. Format with clear sections.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content.map(i => i.text || '').join('');
+    textEl.textContent = text;
+    loadEl.classList.remove('visible');
+    boxEl.classList.add('visible');
+  } catch (e) {
+    loadEl.classList.remove('visible');
+    showToast('Error generating summary. Try again.', 'error');
+  }
+}
+
+// NAVIGATION
+function switchNav(nav, btn) {
+  currentNav = nav;
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-dashboard').style.display = nav === 'dashboard' ? 'block' : 'none';
+  document.getElementById('page-journal').style.display = nav === 'journal' ? 'block' : 'none';
+  document.getElementById('page-insights').style.display = nav === 'insights' ? 'block' : 'none';
+  if (nav === 'insights') renderInsights(getTrades());
+}
+
+function switchInsight(type, btn) {
+  currentInsight = type;
+  document.querySelectorAll('.insight-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('insight-mistakes').style.display = type === 'mistakes' ? 'block' : 'none';
+  document.getElementById('insight-learnings').style.display = type === 'learnings' ? 'block' : 'none';
+}
+
 function toggleDay(date) {
-  collapsedDays[date]=!collapsedDays[date];
-  const wrap=document.getElementById('day-trades-'+date);
-  const arrow=document.getElementById('toggle-arrow-'+date);
+  collapsedDays[date] = !collapsedDays[date];
+  const wrap = document.getElementById('day-trades-' + date);
+  const arrow = document.getElementById('toggle-arrow-' + date);
   if (wrap) wrap.classList.toggle('collapsed', !!collapsedDays[date]);
   if (arrow) arrow.classList.toggle('collapsed', !!collapsedDays[date]);
 }
 
-function setFilter(f,btn) {
-  currentFilter=f;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderDayGroups(getTrades());
 }
 
+// MODAL
 function openModal(id) {
-  editId=id||null;
-  document.getElementById('modal-title').textContent=id?'Edit Trade':'Log New Trade';
+  editId = id || null;
+  document.getElementById('modal-title').textContent = id ? 'Edit Trade' : 'Log New Trade';
   if (id) {
-    const t=getTrades().find(x=>x.id===id);
+    const t = getTrades().find(x => x.id === id);
     if (t) {
-      document.getElementById('f-symbol').value=t.symbol||'';
-      document.getElementById('f-date').value=t.date||'';
-      document.getElementById('f-type').value=t.type||'long';
-      document.getElementById('f-pnl').value=t.pnl||'';
-      document.getElementById('f-setup').value=t.setup||'';
-      document.getElementById('f-learning').value=t.learning||'';
-      document.getElementById('f-mistakes').value=t.mistakes||'';
+      document.getElementById('f-symbol').value = t.symbol || '';
+      document.getElementById('f-date').value = t.date || '';
+      document.getElementById('f-type').value = t.type || 'long';
+      document.getElementById('f-pnl').value = t.pnl || '';
+      document.getElementById('f-market').value = t.market || 'forex';
+      document.getElementById('f-setup').value = t.setup || '';
+      document.getElementById('f-learning').value = t.learning || '';
+      document.getElementById('f-mistakes').value = t.mistakes || '';
     }
   } else {
-    document.getElementById('f-symbol').value='';
-    document.getElementById('f-date').value=today(0);
-    document.getElementById('f-type').value='long';
-    document.getElementById('f-pnl').value='';
-    document.getElementById('f-setup').value='';
-    document.getElementById('f-learning').value='';
-    document.getElementById('f-mistakes').value='';
+    document.getElementById('f-symbol').value = '';
+    document.getElementById('f-date').value = today(0);
+    document.getElementById('f-type').value = 'long';
+    document.getElementById('f-pnl').value = '';
+    document.getElementById('f-market').value = currentMarket;
+    document.getElementById('f-setup').value = '';
+    document.getElementById('f-learning').value = '';
+    document.getElementById('f-mistakes').value = '';
   }
   document.getElementById('trade-modal').classList.add('open');
-  setTimeout(()=>document.getElementById('f-symbol').focus(),100);
+  setTimeout(() => document.getElementById('f-symbol').focus(), 100);
 }
+
 function closeModal() { document.getElementById('trade-modal').classList.remove('open'); }
 
 function saveTrade() {
-  const symbol=document.getElementById('f-symbol').value.trim().toUpperCase();
-  const date=document.getElementById('f-date').value;
-  const type=document.getElementById('f-type').value;
-  const pnl=document.getElementById('f-pnl').value;
-  const setup=document.getElementById('f-setup').value.trim();
-  const learning=document.getElementById('f-learning').value.trim();
-  const mistakes=document.getElementById('f-mistakes').value.trim();
+  const symbol = document.getElementById('f-symbol').value.trim().toUpperCase();
+  const date = document.getElementById('f-date').value;
+  const type = document.getElementById('f-type').value;
+  const pnl = document.getElementById('f-pnl').value;
+  const market = document.getElementById('f-market').value;
+  const setup = document.getElementById('f-setup').value.trim();
+  const learning = document.getElementById('f-learning').value.trim();
+  const mistakes = document.getElementById('f-mistakes').value.trim();
 
-  if (!symbol||!date||pnl==='') { showToast('Please fill Pair, Date and P&L','error'); return; }
+  if (!symbol || !date || pnl === '') { showToast('Please fill Symbol, Date and P&L', 'error'); return; }
 
-  const trades=getTrades();
+  const trades = getTrades();
   if (editId) {
-    const idx=trades.findIndex(t=>t.id===editId);
-    if (idx>-1) trades[idx]={...trades[idx],symbol,date,type,pnl:Number(pnl),setup,learning,mistakes};
+    const idx = trades.findIndex(t => t.id === editId);
+    if (idx > -1) trades[idx] = { ...trades[idx], symbol, date, type, pnl: Number(pnl), market, setup, learning, mistakes };
   } else {
-    trades.push({id:uid(),symbol,date,type,pnl:Number(pnl),setup,learning,mistakes});
+    trades.push({ id: uid(), symbol, date, type, pnl: Number(pnl), market, setup, learning, mistakes });
   }
   saveTrades(trades);
   closeModal();
   renderAll();
-  showToast(editId?'Trade updated!':'Trade logged!','success');
+  showToast(editId ? 'Trade updated!' : 'Trade logged!', 'success');
 }
 
 function editTrade(id) { openModal(id); }
 
 function deleteTrade(id) {
   if (!confirm('Delete this trade?')) return;
-  saveTrades(getTrades().filter(t=>t.id!==id));
+  saveTrades(getTrades().filter(t => t.id !== id));
   renderAll();
-  showToast('Trade deleted','error');
+  showToast('Trade deleted', 'error');
 }
 
-function showToast(msg,type='success') {
-  const toast=document.getElementById('toast');
-  document.getElementById('toast-msg').textContent=msg;
-  toast.className=`toast ${type}`;
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  toast.className = `toast ${type}`;
   toast.classList.add('show');
   clearTimeout(toast._t);
-  toast._t=setTimeout(()=>toast.classList.remove('show'),2800);
+  toast._t = setTimeout(() => toast.classList.remove('show'), 2800);
 }
 
-document.getElementById('trade-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+// Event listeners
+document.getElementById('trade-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 </script>
 </body>
 </html>
