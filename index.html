@@ -69,6 +69,12 @@ textarea.form-input{resize:vertical;min-height:65px;}
 @keyframes dot-blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
 .firebase-label{font-size:10px;font-family:var(--font-mono);color:var(--muted);}
 
+/* forgot password link */
+.forgot-link{font-size:11px;font-family:var(--font-mono);color:var(--accent);text-align:right;cursor:pointer;text-decoration:underline;opacity:0.8;transition:opacity 0.2s;border:none;background:none;padding:0;}
+.forgot-link:hover{opacity:1;}
+.back-link{font-size:11px;font-family:var(--font-mono);color:var(--muted);cursor:pointer;text-decoration:underline;border:none;background:none;padding:0;margin-top:2px;}
+.back-link:hover{color:var(--text);}
+
 /* ── APP SHELL ── */
 #app{display:none;min-height:100vh;position:relative;z-index:1;}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(13,17,23,0.94);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;gap:10px;}
@@ -83,6 +89,8 @@ textarea.form-input{resize:vertical;min-height:65px;}
 .user-name{font-size:12px;font-weight:600;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .btn-logout{background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--muted);font-family:var(--font-display);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
 .btn-logout:hover{border-color:var(--red);color:var(--red);}
+.btn-chgpass{background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--muted);font-family:var(--font-display);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-chgpass:hover{border-color:var(--accent);color:var(--accent);}
 .sync-indicator{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--font-mono);color:var(--muted);}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
 .sync-dot.syncing{background:var(--gold);animation:spin-dot 1s linear infinite;}
@@ -107,6 +115,77 @@ textarea.form-input{resize:vertical;min-height:65px;}
 .nav-tab::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--accent);border-radius:2px;transition:width 0.3s;}
 .nav-tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.4);}
 .nav-tab.active::after{width:60%;}
+
+/* ── ALGO AD BANNER ── */
+.algo-ad-banner{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(0,212,255,0.08) 0%,rgba(0,255,157,0.06) 50%,rgba(255,201,71,0.06) 100%);
+  border:1px solid rgba(0,212,255,0.25);
+  border-radius:14px;padding:18px 20px;margin-bottom:22px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  cursor:pointer;text-decoration:none;
+  transition:all 0.3s ease;
+  animation:fade-up 0.6s ease 0.2s both;
+}
+.algo-ad-banner::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(0,212,255,0.04) 50%,transparent 100%);
+  animation:ad-shimmer 3s ease-in-out infinite;
+}
+@keyframes ad-shimmer{0%,100%{opacity:0;}50%{opacity:1;}}
+.algo-ad-banner:hover{
+  border-color:rgba(0,212,255,0.5);
+  box-shadow:0 0 30px rgba(0,212,255,0.12),0 8px 32px rgba(0,0,0,0.3);
+  transform:translateY(-2px);
+}
+.algo-ad-left{display:flex;align-items:center;gap:14px;flex:1;}
+.algo-ad-icon{
+  width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  box-shadow:0 0 20px rgba(0,212,255,0.3);
+  animation:logo-pulse 2.5s ease-in-out infinite;
+}
+.algo-ad-content{}
+.algo-ad-label{
+  font-size:9px;font-family:var(--font-mono);font-weight:500;
+  color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:3px;opacity:0.8;
+}
+.algo-ad-headline{
+  font-size:14px;font-weight:800;color:var(--text);
+  line-height:1.3;letter-spacing:-0.2px;
+}
+.algo-ad-headline span{color:var(--accent2);}
+.algo-ad-sub{
+  font-size:11px;font-family:var(--font-mono);color:var(--muted);
+  margin-top:3px;line-height:1.5;
+}
+.algo-ad-cta{
+  flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:9px;
+  padding:10px 18px;
+  color:#080c10;font-family:var(--font-display);font-weight:800;font-size:12px;
+  cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;
+  transition:all 0.2s;
+  box-shadow:0 4px 16px rgba(0,212,255,0.25);
+}
+.algo-ad-cta:hover{box-shadow:0 6px 24px rgba(0,212,255,0.45);}
+.algo-ad-close{
+  position:absolute;top:8px;right:8px;
+  background:transparent;border:none;color:var(--muted);
+  font-size:12px;cursor:pointer;padding:3px 6px;
+  border-radius:4px;transition:all 0.2s;line-height:1;
+  z-index:2;
+}
+.algo-ad-close:hover{background:rgba(255,255,255,0.05);color:var(--text);}
+@media(max-width:520px){
+  .algo-ad-banner{flex-direction:column;align-items:flex-start;}
+  .algo-ad-cta{width:100%;justify-content:center;}
+}
 
 /* ── DASHBOARD ── */
 .dash-section{margin-bottom:28px;animation:fade-up 0.5s ease both;}
@@ -233,6 +312,10 @@ td.centered{text-align:center;}
 .toast-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .toast.success .toast-dot{background:var(--green);}
 .toast.error .toast-dot{background:var(--red);}
+
+/* Change Password Modal */
+#chgpass-modal .modal{max-width:400px;}
+
 @media(max-width:500px){
   .summary-table thead th,.summary-table tbody td{padding:10px 10px;}
   .wr-bar-wrap{max-width:50px;}
@@ -279,6 +362,9 @@ td.centered{text-align:center;}
       <div class="form-group">
         <label class="form-label">Password</label>
         <input class="form-input" id="login-pass" type="password" placeholder="Your password" autocomplete="current-password"/>
+        <div style="text-align:right;margin-top:2px;">
+          <button class="forgot-link" onclick="switchAuthTab('forgot')">Forgot password?</button>
+        </div>
       </div>
       <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In →</button>
       <div class="firebase-badge">
@@ -309,6 +395,28 @@ td.centered{text-align:center;}
         <span class="firebase-label">Secured by Firebase · journal from any device</span>
       </div>
     </div>
+
+    <!-- FORGOT PASSWORD -->
+    <div id="forgot-form" class="auth-form" style="display:none">
+      <div class="auth-error" id="forgot-error"></div>
+      <div class="auth-msg" id="forgot-msg"></div>
+      <div style="font-size:12px;font-family:var(--font-mono);color:var(--muted);line-height:1.6;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:9px;padding:10px 13px;">
+        Enter your registered email and we'll send you a password reset link.
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="forgot-email" type="email" placeholder="you@email.com" autocomplete="email"/>
+      </div>
+      <button class="btn-primary" id="forgot-btn" onclick="doForgotPassword()">Send Reset Link →</button>
+      <div style="text-align:center;">
+        <button class="back-link" onclick="switchAuthTab('login')">← Back to Sign In</button>
+      </div>
+      <div class="firebase-badge">
+        <div class="firebase-dot"></div>
+        <span class="firebase-label">Reset link sent via Firebase Auth</span>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -328,6 +436,7 @@ td.centered{text-align:center;}
         <div class="user-avatar" id="user-avatar-text">U</div>
         <span class="user-name" id="user-display-name">Trader</span>
       </div>
+      <button class="btn-chgpass" onclick="openChangePassModal()" title="Change Password">🔑</button>
       <button class="btn-logout" onclick="doLogout()">Logout</button>
     </div>
   </div>
@@ -346,7 +455,22 @@ td.centered{text-align:center;}
     <div class="inline-quote" id="inline-quote-card">
       <span class="inline-quote-icon">💬</span>
       <span class="inline-quote-text" id="inline-quote-text"></span>
-      
+    </div>
+
+    <!-- ── ALGO TRADING AD BANNER ── -->
+    <div class="algo-ad-banner" id="algo-ad-banner" onclick="window.open('https://vaibhavbj.github.io/algo/','_blank')">
+      <button class="algo-ad-close" onclick="event.stopPropagation();document.getElementById('algo-ad-banner').style.display='none'">✕</button>
+      <div class="algo-ad-left">
+        <div class="algo-ad-icon">🤖</div>
+        <div class="algo-ad-content">
+          <div class="algo-ad-label">🚀 Sponsored · Algo Trading</div>
+          <div class="algo-ad-headline">Say <span>No</span> to Emotional Trading</div>
+          <div class="algo-ad-sub">Automate your trading strategy with us using algo trading — trade smarter, not harder.</div>
+        </div>
+      </div>
+      <button class="algo-ad-cta" onclick="window.open('https://vaibhavbj.github.io/algo/','_blank')">
+        Explore Now →
+      </button>
     </div>
 
     <div class="nav-tabs">
@@ -402,7 +526,7 @@ td.centered{text-align:center;}
   </div>
 </div>
 
-<!-- ════════════ MODAL ════════════ -->
+<!-- ════════════ TRADE MODAL ════════════ -->
 <div class="modal-overlay" id="trade-modal">
   <div class="modal">
     <div class="modal-header">
@@ -456,14 +580,46 @@ td.centered{text-align:center;}
   </div>
 </div>
 
+<!-- ════════════ CHANGE PASSWORD MODAL ════════════ -->
+<div class="modal-overlay" id="chgpass-modal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">🔑 Change Password</div>
+      <button class="btn-close" onclick="closeChangePassModal()">✕</button>
+    </div>
+    <div class="auth-error" id="chgpass-error" style="margin-bottom:14px;"></div>
+    <div class="auth-msg" id="chgpass-msg" style="margin-bottom:14px;"></div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:12px;font-family:var(--font-mono);color:var(--muted);line-height:1.6;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:9px;padding:10px 13px;">
+        For security, we'll first re-authenticate you with your current password before setting a new one.
+      </div>
+      <div class="form-group">
+        <label class="form-label">Current Password</label>
+        <input class="form-input" id="chgpass-current" type="password" placeholder="Your current password"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">New Password</label>
+        <input class="form-input" id="chgpass-new" type="password" placeholder="Min 6 characters"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm New Password</label>
+        <input class="form-input" id="chgpass-confirm" type="password" placeholder="Repeat new password"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeChangePassModal()">Cancel</button>
+      <button class="btn-save" id="chgpass-btn" onclick="doChangePassword()">Update Password</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg">Saved!</span></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ✅ Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyDnLCMHXO3668-HzVI548S5bSN3NYZZbOo",
   authDomain: "trading-journal-b9b8b.firebaseapp.com",
@@ -473,12 +629,11 @@ const firebaseConfig = {
   appId: "1:397306524354:web:bf90200f9c873cbbb4015b"
 };
 
-/* ════ INIT FIREBASE ════ */
-const app    = initializeApp(firebaseConfig);
-const auth   = getAuth(app);
-const db     = getFirestore(app);
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
-/* ════════ QUOTES ════════ */
+/* ════ QUOTES ════ */
 const QUOTES = [
   "No journal → No improvement → Same mistakes → Same losses.",
   "If I didn't journal it, I didn't learn from it.",
@@ -511,7 +666,7 @@ function rotateInlineQuote() {
 }
 window.rotateInlineQuote = rotateInlineQuote;
 
-/* ════════ PARTICLES ════════ */
+/* ════ PARTICLES ════ */
 function spawnParticles() {
   const wrap = document.getElementById('particles-wrap');
   const colors = ['rgba(0,212,255,0.6)', 'rgba(0,255,157,0.5)', 'rgba(255,201,71,0.4)'];
@@ -522,11 +677,11 @@ function spawnParticles() {
   }
 }
 
-/* ════════ STATE ════════ */
+/* ════ STATE ════ */
 let currentUser = null, currentFilter = 'all', editId = null, cachedTrades = [];
 const collapsedDays = {};
 
-/* ════════ SYNC INDICATOR ════════ */
+/* ════ SYNC INDICATOR ════ */
 function setSyncing(on) {
   const dot = document.getElementById('sync-dot');
   const lbl = document.getElementById('sync-label');
@@ -534,13 +689,20 @@ function setSyncing(on) {
   else     { dot.classList.remove('syncing'); lbl.textContent = 'Synced'; }
 }
 
-/* ════════ AUTH ════════ */
+/* ════ AUTH TAB SWITCHER ════ */
 window.switchAuthTab = function(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t, i) => t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register')));
+  const tabs = document.querySelectorAll('.auth-tab');
+  tabs[0].classList.toggle('active', tab === 'login');
+  tabs[1].classList.toggle('active', tab === 'register');
   document.getElementById('login-form').style.display    = tab === 'login'    ? 'flex' : 'none';
   document.getElementById('register-form').style.display = tab === 'register' ? 'flex' : 'none';
+  document.getElementById('forgot-form').style.display   = tab === 'forgot'   ? 'flex' : 'none';
+  // Clear messages when switching
+  document.getElementById('forgot-error').style.display = 'none';
+  document.getElementById('forgot-msg').style.display   = 'none';
 };
 
+/* ════ LOGIN ════ */
 window.doLogin = async function() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-pass').value;
@@ -559,6 +721,7 @@ window.doLogin = async function() {
   }
 };
 
+/* ════ REGISTER ════ */
 window.doRegister = async function() {
   const name  = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
@@ -581,13 +744,84 @@ window.doRegister = async function() {
   }
 };
 
-window.doLogout = async function() {
-  await signOut(auth);
+/* ════ FORGOT PASSWORD ════ */
+window.doForgotPassword = async function() {
+  const email = document.getElementById('forgot-email').value.trim();
+  const err   = document.getElementById('forgot-error');
+  const msg   = document.getElementById('forgot-msg');
+  const btn   = document.getElementById('forgot-btn');
+  err.style.display = 'none'; msg.style.display = 'none';
+  if (!email) { showAuthErr(err, 'Please enter your email address.'); return; }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    await sendPasswordResetEmail(auth, email);
+    msg.textContent = '✅ Reset link sent! Check your inbox (and spam folder).';
+    msg.style.display = 'block';
+    document.getElementById('forgot-email').value = '';
+  } catch (e) {
+    const m = e.code === 'auth/user-not-found' ? 'No account found with this email.'
+            : e.code === 'auth/invalid-email'   ? 'Invalid email address.' : e.message;
+    showAuthErr(err, m);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send Reset Link →';
+  }
+};
+
+/* ════ LOGOUT ════ */
+window.doLogout = async function() { await signOut(auth); };
+
+/* ════ CHANGE PASSWORD ════ */
+window.openChangePassModal = function() {
+  document.getElementById('chgpass-current').value = '';
+  document.getElementById('chgpass-new').value     = '';
+  document.getElementById('chgpass-confirm').value = '';
+  document.getElementById('chgpass-error').style.display = 'none';
+  document.getElementById('chgpass-msg').style.display   = 'none';
+  document.getElementById('chgpass-btn').disabled = false;
+  document.getElementById('chgpass-btn').textContent = 'Update Password';
+  document.getElementById('chgpass-modal').classList.add('open');
+  setTimeout(() => document.getElementById('chgpass-current').focus(), 150);
+};
+window.closeChangePassModal = function() {
+  document.getElementById('chgpass-modal').classList.remove('open');
+};
+window.doChangePassword = async function() {
+  const current = document.getElementById('chgpass-current').value;
+  const newPass = document.getElementById('chgpass-new').value;
+  const confirm = document.getElementById('chgpass-confirm').value;
+  const err = document.getElementById('chgpass-error');
+  const msg = document.getElementById('chgpass-msg');
+  const btn = document.getElementById('chgpass-btn');
+  err.style.display = 'none'; msg.style.display = 'none';
+  if (!current || !newPass || !confirm) { showAuthErr(err, 'Please fill all fields.'); return; }
+  if (newPass.length < 6) { showAuthErr(err, 'New password must be at least 6 characters.'); return; }
+  if (newPass !== confirm) { showAuthErr(err, 'New passwords do not match.'); return; }
+  if (current === newPass) { showAuthErr(err, 'New password must be different from current.'); return; }
+  btn.disabled = true; btn.textContent = 'Updating…';
+  try {
+    const credential = EmailAuthProvider.credential(currentUser.email, current);
+    await reauthenticateWithCredential(currentUser, credential);
+    await updatePassword(currentUser, newPass);
+    msg.textContent = '✅ Password updated successfully!';
+    msg.style.display = 'block';
+    document.getElementById('chgpass-current').value = '';
+    document.getElementById('chgpass-new').value     = '';
+    document.getElementById('chgpass-confirm').value = '';
+    setTimeout(() => closeChangePassModal(), 2000);
+    showToast('Password changed!', 'success');
+  } catch (e) {
+    const m = e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential'
+            ? 'Current password is incorrect.'
+            : e.code === 'auth/too-many-requests' ? 'Too many attempts. Try later.' : e.message;
+    showAuthErr(err, m);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Update Password';
+  }
 };
 
 function showAuthErr(el, m) { el.textContent = m; el.style.display = 'block'; }
 
-/* ════════ FIRESTORE HELPERS ════════ */
+/* ════ FIRESTORE HELPERS ════ */
 function tradesCol(uid) { return collection(db, 'users', uid, 'trades'); }
 
 async function fetchTrades() {
@@ -596,21 +830,15 @@ async function fetchTrades() {
     const q = query(tradesCol(currentUser.uid), orderBy('date', 'desc'));
     const snap = await getDocs(q);
     cachedTrades = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (e) {
-    console.error('Fetch error:', e);
-    showToast('Error loading trades', 'error');
-  } finally { setSyncing(false); }
-}
-
-async function addTradeFS(data) {
-  setSyncing(true);
-  try {
-    const docRef = await addDoc(tradesCol(currentUser.uid), data);
-    cachedTrades.unshift({ id: docRef.id, ...data });
-  } catch (e) { console.error(e); showToast('Save failed', 'error'); throw e; }
+  } catch (e) { console.error('Fetch error:', e); showToast('Error loading trades', 'error'); }
   finally { setSyncing(false); }
 }
-
+async function addTradeFS(data) {
+  setSyncing(true);
+  try { const docRef = await addDoc(tradesCol(currentUser.uid), data); cachedTrades.unshift({ id: docRef.id, ...data }); }
+  catch (e) { console.error(e); showToast('Save failed', 'error'); throw e; }
+  finally { setSyncing(false); }
+}
 async function updateTradeFS(id, data) {
   setSyncing(true);
   try {
@@ -620,17 +848,14 @@ async function updateTradeFS(id, data) {
   } catch (e) { console.error(e); showToast('Update failed', 'error'); throw e; }
   finally { setSyncing(false); }
 }
-
 async function deleteTradeFS(id) {
   setSyncing(true);
-  try {
-    await deleteDoc(doc(db, 'users', currentUser.uid, 'trades', id));
-    cachedTrades = cachedTrades.filter(t => t.id !== id);
-  } catch (e) { console.error(e); showToast('Delete failed', 'error'); throw e; }
+  try { await deleteDoc(doc(db, 'users', currentUser.uid, 'trades', id)); cachedTrades = cachedTrades.filter(t => t.id !== id); }
+  catch (e) { console.error(e); showToast('Delete failed', 'error'); throw e; }
   finally { setSyncing(false); }
 }
 
-/* ════════ ENTER APP ════════ */
+/* ════ ENTER APP ════ */
 async function enterApp(user) {
   currentUser = user;
   document.getElementById('auth-screen').style.display = 'none';
@@ -644,7 +869,7 @@ async function enterApp(user) {
   renderAll();
 }
 
-/* ════════ AUTH STATE OBSERVER ════════ */
+/* ════ AUTH STATE ════ */
 onAuthStateChanged(auth, async (user) => {
   document.getElementById('loading-screen').style.display = 'none';
   if (user) {
@@ -659,12 +884,12 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('login-btn').textContent = 'Sign In →';
     document.getElementById('reg-btn').disabled = false;
     document.getElementById('reg-btn').textContent = 'Create Account →';
+    switchAuthTab('login');
   }
 });
 
-/* ════════ HELPERS ════════ */
+/* ════ HELPERS ════ */
 function renderAll() { renderDashboard(cachedTrades); renderDayGroups(cachedTrades); renderInsights(cachedTrades); }
-
 function fmtCurrency(v, market) {
   const n = Number(v), abs = Math.abs(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return (n >= 0 ? '+' : '-') + (market === 'equity' ? '₹' : '$') + abs;
@@ -679,7 +904,7 @@ function todayStr() { return new Date().toISOString().slice(0, 10); }
 function getWeekStart() { const d = new Date(), day = d.getDay(), mon = new Date(d.getFullYear(), d.getMonth(), d.getDate() - day + (day === 0 ? -6 : 1)); return mon.toISOString().slice(0, 10); }
 function getMonthStart() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`; }
 
-/* ════════ DASHBOARD ════════ */
+/* ════ DASHBOARD ════ */
 function calcStats(trades) {
   const total = trades.length, forexT = trades.filter(t => t.market !== 'equity'), equityT = trades.filter(t => t.market === 'equity');
   const forexPnl = forexT.reduce((s, t) => s + Number(t.pnl || 0), 0), equityPnl = equityT.reduce((s, t) => s + Number(t.pnl || 0), 0);
@@ -706,7 +931,7 @@ function renderDashboard(trades) {
   }).join('');
 }
 
-/* ════════ TRADE LOG ════════ */
+/* ════ TRADE LOG ════ */
 function renderDayGroups(allTrades) {
   let trades = [...allTrades];
   if (currentFilter === 'long')  trades = trades.filter(t => t.type === 'long');
@@ -774,7 +999,7 @@ function renderTradeCard(t, i) {
   </div>`;
 }
 
-/* ════════ INSIGHTS ════════ */
+/* ════ INSIGHTS ════ */
 function renderInsights(trades) {
   const mistakes  = trades.filter(t => t.mistakes && t.mistakes.trim());
   const learnings = trades.filter(t => t.learning && t.learning.trim());
@@ -793,7 +1018,7 @@ function renderInsights(trades) {
   if (ll) ll.innerHTML = learnings.length ? learnings.map((t,i) => entryHTML(t, i, 'learning')).join('') : `<div class="empty-state"><div class="empty-text">No learnings logged yet</div></div>`;
 }
 
-/* ════════ NAVIGATION ════════ */
+/* ════ NAVIGATION ════ */
 window.switchNav = function(nav, btn) {
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -820,7 +1045,7 @@ window.setFilter = function(f, btn) {
   renderDayGroups(cachedTrades);
 };
 
-/* ════════ MODAL ════════ */
+/* ════ TRADE MODAL ════ */
 window.openModal = function(id) {
   editId = id || null;
   document.getElementById('modal-title').textContent = id ? 'Edit Trade' : 'Log New Trade';
@@ -865,7 +1090,7 @@ window.saveTrade = async function() {
     if (editId) { await updateTradeFS(editId, data); showToast('Trade updated!', 'success'); }
     else        { await addTradeFS(data);             showToast('Trade logged!',   'success'); }
     closeModal(); renderAll();
-  } catch (e) { /* error already toasted */ }
+  } catch (e) { /* already toasted */ }
   finally { saveBtn.disabled = false; saveBtn.textContent = 'Save Trade'; }
 };
 window.editTrade   = function(id) { openModal(id); };
@@ -874,7 +1099,7 @@ window.deleteTrade = async function(id) {
   try { await deleteTradeFS(id); renderAll(); showToast('Trade deleted', 'error'); } catch (e) {}
 };
 
-/* ════════ TOAST ════════ */
+/* ════ TOAST ════ */
 function showToast(msg, type = 'success') {
   const toast = document.getElementById('toast');
   document.getElementById('toast-msg').textContent = msg;
@@ -883,13 +1108,15 @@ function showToast(msg, type = 'success') {
 }
 window.showToast = showToast;
 
-/* ════════ INIT ════════ */
+/* ════ INIT ════ */
 spawnParticles();
 startAuthQuotes();
 setInterval(() => { if (document.getElementById('app').style.display !== 'none') rotateInlineQuote(); }, 8000);
 document.getElementById('trade-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+document.getElementById('chgpass-modal').addEventListener('click', function(e) { if (e.target === this) closeChangePassModal(); });
 document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') window.doLogin(); });
 document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') window.doLogin(); });
+document.getElementById('forgot-email').addEventListener('keydown', e => { if (e.key === 'Enter') window.doForgotPassword(); });
 </script>
 </body>
 </html>
