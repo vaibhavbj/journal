@@ -209,10 +209,32 @@ textarea.form-input{resize:vertical;min-height:65px;}
 .dash-section{margin-bottom:28px;animation:fade-up 0.5s ease both;}
 .dash-section-title{font-size:13px;font-weight:700;color:#c0d8e8;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .dash-section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
-.summary-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-.summary-table thead th{padding:11px 14px;font-size:10px;font-weight:700;color:#c0d8e8;letter-spacing:0.1em;text-transform:uppercase;text-align:left;background:var(--surface);border-bottom:1px solid var(--border);}
+
+/* ── TABLE SCROLL WRAPPER (fixes mobile P&L columns hidden issue) ── */
+.table-scroll{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  border-radius:14px;
+  /* show scrollbar hint on mobile */
+}
+.table-scroll::-webkit-scrollbar{height:4px;}
+.table-scroll::-webkit-scrollbar-track{background:transparent;}
+.table-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+.summary-table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  /* min-width ensures all columns are always visible — table scrolls instead of hiding columns */
+  min-width:420px;
+}
+.summary-table thead th{padding:11px 14px;font-size:10px;font-weight:700;color:#c0d8e8;letter-spacing:0.1em;text-transform:uppercase;text-align:left;background:var(--surface);border-bottom:1px solid var(--border);white-space:nowrap;}
 .summary-table thead th:not(:first-child){text-align:center;}
-.summary-table tbody td{padding:13px 14px;border-bottom:1px solid rgba(30,45,61,0.5);font-family:var(--font-mono);font-size:13px;vertical-align:middle;transition:background 0.15s;}
+.summary-table tbody td{padding:13px 14px;border-bottom:1px solid rgba(30,45,61,0.5);font-family:var(--font-mono);font-size:13px;vertical-align:middle;transition:background 0.15s;white-space:nowrap;}
 .summary-table tbody tr:last-child td{border-bottom:none;}
 .summary-table tbody tr{animation:row-in 0.4s ease both;}
 .summary-table tbody tr:nth-child(1){animation-delay:0.05s;}
@@ -335,11 +357,8 @@ td.centered{text-align:center;}
 .info-box{font-size:12px;font-family:var(--font-mono);color:#b0c8d8;line-height:1.6;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:9px;padding:10px 13px;}
 .chgpass-info{font-size:12px;font-family:var(--font-mono);color:#b0c8d8;line-height:1.6;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:9px;padding:10px 13px;}
 
-/* ── MOBILE RESPONSIVE OVERRIDES ── */
+/* ── MOBILE RESPONSIVE ── */
 @media(max-width:540px){
-  .summary-table{font-size:12px;}
-  .summary-table thead th,.summary-table tbody td{padding:10px 10px;}
-  .wr-bar-wrap{max-width:50px;}
   .topbar{padding:10px 12px;}
   .topbar-logo-text{font-size:15px;}
   .user-name{max-width:60px;}
@@ -351,11 +370,16 @@ td.centered{text-align:center;}
   .algo-ad-headline{font-size:13px;}
   .algo-ad-sub{font-size:10px;}
   .main{padding:16px 12px;}
+  /* Tighter table cells on small screens — table still scrolls, never hides */
+  .summary-table thead th{padding:9px 10px;font-size:9px;}
+  .summary-table tbody td{padding:11px 10px;font-size:12px;}
+  .wr-bar-wrap{max-width:50px;}
 }
 @media(max-width:380px){
   .user-name{display:none;}
-  .summary-table thead th:nth-child(3){display:none;}
-  .summary-table tbody td:nth-child(3){display:none;}
+  /* NOTE: we intentionally do NOT hide any table columns here.
+     The .table-scroll wrapper lets the table scroll horizontally
+     so all columns (including Forex P&L) are always reachable. */
 }
 </style>
 </head>
@@ -541,18 +565,35 @@ td.centered{text-align:center;}
     <div id="page-dashboard">
       <div class="dash-section" style="animation-delay:0s">
         <div class="dash-section-title">📈 P&L Performance</div>
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <!-- .table-scroll wrapper makes table horizontally scrollable on mobile
+             so ALL columns are always visible — no hiding, no truncation -->
+        <div class="table-scroll">
           <table class="summary-table">
-            <thead><tr><th>Period</th><th>Trades</th><th>Forex P&L</th><th>Equity P&L</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Trades</th>
+                <th>Forex P&L ($)</th>
+                <th>Equity P&L (₹)</th>
+              </tr>
+            </thead>
             <tbody id="tbody-pnl"></tbody>
           </table>
         </div>
       </div>
       <div class="dash-section" style="animation-delay:0.1s">
         <div class="dash-section-title">🎯 Win Rate</div>
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <div class="table-scroll">
           <table class="summary-table">
-            <thead><tr><th>Period</th><th>Trades</th><th>Wins</th><th>Losses</th><th>Win Rate</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Trades</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Win Rate</th>
+              </tr>
+            </thead>
             <tbody id="tbody-wr"></tbody>
           </table>
         </div>
